@@ -61,4 +61,31 @@
         <item name="android:textColor">@color/on_background</item>
     </style>
 
+    <!-- Text styles. Use with style="@style/...", NOT android:textAppearance -->
+    <style name="Widget.MTS.Text.Heading1" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/epilogue_black</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/on_background</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Widget.MTS.Text.Heading2" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/epilogue_bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/on_background</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Widget.MTS.Text.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/nunito</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/on_background</item>
+    </style>
+
+    <style name="Widget.MTS.Text.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/nunito</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/on_background</item>
+    </style>
+
 </resources>
