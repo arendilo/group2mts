@@ -98,4 +98,19 @@
         <item name="android:textColor">@color/on_background</item>
     </style>
 
+    <!-- Card: white, rounded, flat. Used for every white box on the dashboard -->
+    <style name="Widget.MTS.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/surface</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <!-- Small muted text: dates, timestamps, labels under icons -->
+    <style name="Widget.MTS.Text.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/nunito</item>
+        <item name="fontFamily">@font/nunito</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/muted</item>
+    </style>
+
 </resources>

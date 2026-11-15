@@ -7,13 +7,457 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <!-- ================= Scrollable content ================= -->
+    <ScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp">
+
+            <!-- 1. Header: date, greeting, "Today" button -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvDate"
+                        style="@style/Widget.MTS.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        tools:text="SATURDAY, NOVEMBER 14" />
+
+                    <TextView
+                        android:id="@+id/tvGreeting"
+                        style="@style/Widget.MTS.Text.Heading1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hey, Alex!"
+                        android:textSize="24sp" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPeriod"
+                    style="@style/Widget.MTS.Button.Primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="40dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="12dp"
+                    android:text="Today"
+                    android:textColor="@color/white"
+                    app:icon="@drawable/ic_arrow_drop_down"
+                    app:iconGravity="textEnd"
+                    app:iconPadding="0dp"
+                    app:iconTint="@color/white" />
+            </LinearLayout>
+
+            <!-- 2. Weather card -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.MTS.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_sun"
+                        app:tint="@color/accent_warning" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Widget.MTS.Text.Body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="32°C Sunny"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            style="@style/Widget.MTS.Text.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hot weather! +300 ml recommended today" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 3. Hydration card -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.MTS.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Widget.MTS.Text.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:text="TODAY'S HYDRATION"
+                        android:textColor="@color/on_background"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvTotal"
+                        style="@style/Widget.MTS.Text.Heading1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        tools:text="1,200 ml" />
+
+                    <TextView
+                        android:id="@+id/tvGoal"
+                        style="@style/Widget.MTS.Text.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        tools:text="of 2,000 ml daily goal" />
+
+                    <!-- Water scene: two waves (same PNG, two tints) + otter + percent pill.
+                         The card clips anything that sticks out of the rounded corners. -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="170dp"
+                        android:layout_marginTop="8dp">
+
+                        <!-- Back wave, light -->
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="600dp"
+                            android:layout_marginTop="20dp"
+                            android:contentDescription="@null"
+                            android:scaleType="fitStart"
+                            android:src="@drawable/bg_wave_auth"
+                            app:tint="@color/primary_container" />
+
+                        <!-- Front wave, darker. scaleX = -1 flips it so the two waves don't line up -->
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="600dp"
+                            android:layout_marginTop="75dp"
+                            android:contentDescription="@null"
+                            android:scaleType="fitStart"
+                            android:scaleX="-1"
+                            android:src="@drawable/bg_wave_auth"
+                            app:tint="@color/primary" />
+
+                        <ImageView
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="28dp"
+                            android:layout_marginTop="22dp"
+                            android:adjustViewBounds="true"
+                            android:contentDescription="@null"
+                            android:src="@drawable/img_otter_swim" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/Widget.MTS.Card"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginTop="48dp"
+                            android:layout_marginEnd="20dp"
+                            app:cardBackgroundColor="@color/accent_warning"
+                            app:cardCornerRadius="16dp">
+
+                            <TextView
+                                android:id="@+id/tvPercent"
+                                style="@style/Widget.MTS.Text.BodyLarge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingHorizontal="16dp"
+                                android:paddingVertical="6dp"
+                                android:textStyle="bold"
+                                tools:text="60%" />
+                        </com.google.android.material.card.MaterialCardView>
+                    </FrameLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 4. Quick-add chips. Which one is "selected" is decided in MainActivity -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/chip100"
+                    style="@style/Widget.MTS.Button.Secondary.Dark"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:paddingHorizontal="0dp"
+                    android:text="+100 ml"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/chip200"
+                    style="@style/Widget.MTS.Button.Secondary.Dark"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:paddingHorizontal="0dp"
+                    android:text="+200 ml"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/chip350"
+                    style="@style/Widget.MTS.Button.Secondary.Dark"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:paddingHorizontal="0dp"
+                    android:text="+350 ml"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/chip500"
+                    style="@style/Widget.MTS.Button.Secondary.Dark"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:paddingHorizontal="0dp"
+                    android:text="+500 ml"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- 5. Drink record card -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.MTS.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/Widget.MTS.Text.Heading2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Drink Record" />
+
+                        <TextView
+                            android:id="@+id/tvSips"
+                            style="@style/Widget.MTS.Text.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="3 sips today" />
+                    </LinearLayout>
+
+                    <!-- Rows are added here from MainActivity (item_drink_record.xml) -->
+                    <LinearLayout
+                        android:id="@+id/listRecords"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ================= Bottom navigation + center button ================= -->
+    <FrameLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- The white bar. marginTop = half the button height so the button pokes out above it. -->
+        <LinearLayout
+            android:id="@+id/navBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:background="@color/surface"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:id="@+id/navHome"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_home"
+                    app:tint="@color/on_background" />
+
+                <TextView
+                    style="@style/Widget.MTS.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textColor="@color/on_background" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/navHistory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_history"
+                    app:tint="@color/primary" />
+
+                <TextView
+                    style="@style/Widget.MTS.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+                    android:textColor="@color/primary" />
+            </LinearLayout>
+
+            <!-- Empty slot: this is where the round button sits -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/navGoals"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_water_drop"
+                    app:tint="@color/primary" />
+
+                <TextView
+                    style="@style/Widget.MTS.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Goals"
+                    android:textColor="@color/primary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/navProfile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/primary" />
+
+                <TextView
+                    style="@style/Widget.MTS.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    android:textColor="@color/primary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Declared AFTER navBar so it is drawn on top of it -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:contentDescription="Add drink"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/primary"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+            app:tint="@color/white" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
