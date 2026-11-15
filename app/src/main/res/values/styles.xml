@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Cyan primary button, for white backgrounds -->
+    <style name="Widget.MTS.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="cornerRadius">26dp</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/on_background</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Navy primary button, for cyan backgrounds  -->
+    <style name="Widget.MTS.Button.Dark" parent="Widget.Material3.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="cornerRadius">26dp</item>
+        <item name="backgroundTint">@color/on_background</item>
+        <item name="android:textColor">@color/surface</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Secondary button, white fill with outline -->
+    <style name="Widget.MTS.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">52dp</item>
+        <item name="cornerRadius">26dp</item>
+        <item name="backgroundTint">@color/surface</item>
+        <item name="strokeColor">@color/primary</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Blue text button, for white backgrounds -->
+    <style name="Widget.MTS.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- Navy text button, for cyan backgrounds -->
+    <style name="Widget.MTS.Button.Text.Dark" parent="Widget.MTS.Button.Text">
+        <item name="android:textColor">@color/on_background</item>
+    </style>
+
+    <!-- Text input field: white, fully rounded, no outline until focused -->
+    <style name="Widget.MTS.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/surface</item>
+        <item name="boxCornerRadiusTopStart">26dp</item>
+        <item name="boxCornerRadiusTopEnd">26dp</item>
+        <item name="boxCornerRadiusBottomStart">26dp</item>
+        <item name="boxCornerRadiusBottomEnd">26dp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxStrokeColor">@color/primary</item>
+        <item name="hintEnabled">false</item>
+        <item name="android:textColorHint">@color/muted</item>
+    </style>
+
+    <style name="Widget.MTS.EditText" parent="Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="android:textColor">@color/on_background</item>
+    </style>
+
+</resources>
