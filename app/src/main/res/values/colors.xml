@@ -11,4 +11,7 @@
     <color name="muted">#8E7E7A</color>
     <color name="page_background">#F1FAFC</color>
     <color name="wave_blue">#12B5D8</color>
+
+    <color name="streak_orange">#FF922E</color>
+    <color name="coffee_brown">#A88B78</color>
 </resources>

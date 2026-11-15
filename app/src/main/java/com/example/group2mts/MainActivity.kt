@@ -82,7 +82,10 @@ class MainActivity : AppCompatActivity() {
             render()
         }
 
-        // TODO: nav clicks (navHistory, navGoals, navProfile) once those screens exist.
+        //history
+        findViewById<View>(R.id.navHistory).setOnClickListener {
+            startActivity(android.content.Intent(this, HistoryActivity::class.java))
+        }
 
         updateChips()
         render()

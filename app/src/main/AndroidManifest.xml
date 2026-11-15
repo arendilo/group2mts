@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Group2mts">
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".WelcomeActivity"
             android:exported="true">
@@ -31,6 +31,10 @@
             android:name=".RegisterActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".HistoryActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
