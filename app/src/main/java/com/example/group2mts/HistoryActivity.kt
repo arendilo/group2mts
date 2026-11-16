@@ -3,6 +3,7 @@ package com.example.group2mts
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -11,12 +12,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.core.widget.NestedScrollView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -26,79 +30,132 @@ import java.util.Locale
 class HistoryActivity : AppCompatActivity() {
 
     private var selectedDate: LocalDate = LocalDate.now()
+    private var selectedMonth: YearMonth = YearMonth.from(selectedDate)
+
     private val headerDateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH)
+    private val monthYearFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
+    private val shortMonthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.ENGLISH)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_history)
 
-        val scrollContent = findViewById<View>(R.id.layoutScrollContent)
-        val contentBasePaddingTop = scrollContent.paddingTop
+        // Window insets
+        val dayContent = findViewById<View>(R.id.layoutScrollContent)
+        val monthContainer = findViewById<View>(R.id.layoutMonthContainer)
+        val dayBasePaddingTop = dayContent.paddingTop
+        val monthBasePaddingTop = monthContainer.paddingTop
         val navBar = findViewById<View>(R.id.navBar)
         val navBarBasePadding = navBar.paddingBottom
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, 0, systemBars.right, 0)
-            scrollContent.updatePadding(top = contentBasePaddingTop + systemBars.top)
+            dayContent.updatePadding(top = dayBasePaddingTop + systemBars.top)
+            monthContainer.updatePadding(top = monthBasePaddingTop + systemBars.top)
             navBar.updatePadding(bottom = navBarBasePadding + systemBars.bottom)
             insets
         }
 
-        // 1. Klik ikon kalender di pojok kanan atas
+        // Date picker
         findViewById<ImageButton>(R.id.btnCalendar).setOnClickListener {
             showCalendarPicker()
         }
 
-        // 2. Klik tab Day / Month / Year
+        // Month navigation
+        findViewById<ImageButton>(R.id.btnPrevMonth).setOnClickListener {
+            selectedMonth = selectedMonth.minusMonths(1)
+            renderMonthSection()
+        }
+        findViewById<ImageButton>(R.id.btnNextMonth).setOnClickListener {
+            selectedMonth = selectedMonth.plusMonths(1)
+            renderMonthSection()
+        }
+
+        // Period tabs
         setupPeriodTabs()
 
-        // 3. Klik tombol Home di navbar bawah
+        // Bottom navigation
         findViewById<View>(R.id.navHome).setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
 
-        // Render kalender mingguan
         renderCalendarStrip()
+        renderMonthSection()
     }
 
     private fun setupPeriodTabs() {
-        val cardDay = findViewById<MaterialCardView>(R.id.cardTabDay)
-        val cardMonth = findViewById<MaterialCardView>(R.id.cardTabMonth)
-        val cardYear = findViewById<MaterialCardView>(R.id.cardTabYear)
+        val scrollHistory = findViewById<NestedScrollView>(R.id.scrollHistory)
+        val dayContainer = findViewById<View>(R.id.layoutDayContainer)
+        val monthContainer = findViewById<View>(R.id.layoutMonthContainer)
 
-        val tabDay = findViewById<TextView>(R.id.tabDay)
-        val tabMonth = findViewById<TextView>(R.id.tabMonth)
-        val tabYear = findViewById<TextView>(R.id.tabYear)
-        val tvRhythmTitle = findViewById<TextView>(R.id.tvRhythmTitle)
-
-        fun selectTab(selected: String) {
-            val activeBg = getColor(R.color.wave_blue)
-            val inactiveBg = Color.TRANSPARENT
-            val activeText = getColor(R.color.white)
-            val inactiveText = getColor(R.color.on_background)
-
-            cardDay.setCardBackgroundColor(if (selected == "Day") activeBg else inactiveBg)
-            tabDay.setTextColor(if (selected == "Day") activeText else inactiveText)
-
-            cardMonth.setCardBackgroundColor(if (selected == "Month") activeBg else inactiveBg)
-            tabMonth.setTextColor(if (selected == "Month") activeText else inactiveText)
-
-            cardYear.setCardBackgroundColor(if (selected == "Year") activeBg else inactiveBg)
-            tabYear.setTextColor(if (selected == "Year") activeText else inactiveText)
-
-            tvRhythmTitle.text = when (selected) {
-                "Month" -> "This month’s rhythm"
-                "Year" -> "This year’s rhythm"
-                else -> "Today’s rhythm"
+        fun switchMode(mode: String) {
+            if (mode == "Month") {
+                dayContainer.isVisible = false
+                monthContainer.isVisible = true
+                renderMonthSection()
+            } else {
+                monthContainer.isVisible = false
+                dayContainer.isVisible = true
             }
+            scrollHistory.scrollTo(0, 0)
         }
 
-        cardDay.setOnClickListener { selectTab("Day") }
-        cardMonth.setOnClickListener { selectTab("Month") }
-        cardYear.setOnClickListener { selectTab("Year") }
+        // Day view tabs
+        findViewById<MaterialCardView>(R.id.cardTabDay).setOnClickListener { switchMode("Day") }
+        findViewById<MaterialCardView>(R.id.cardTabMonth).setOnClickListener { switchMode("Month") }
+
+        // Month view tabs
+        findViewById<MaterialCardView>(R.id.cardMonthTabDay).setOnClickListener { switchMode("Day") }
+        findViewById<MaterialCardView>(R.id.cardMonthTabMonth).setOnClickListener { switchMode("Month") }
+    }
+
+    private fun renderMonthSection() {
+        findViewById<TextView>(R.id.tvMonthYearTitle).text =
+            selectedMonth.format(monthYearFormatter)
+
+        val shortMonth = selectedMonth.format(shortMonthFormatter)
+        findViewById<TextView>(R.id.tvMonthPeriodRange).text =
+            "$shortMonth 1–14 · hydration credited"
+
+        renderMonthBars()
+    }
+
+    private fun renderMonthBars() {
+        val container = findViewById<LinearLayout>(R.id.layoutMonthBarsContainer)
+        container.removeAllViews()
+
+        // Chart data
+        val dailyValuesMl = listOf(
+            1650, 1850, 2150, 1950, 2050, 2100, 2250,
+            2150, 2350, 2300, 2150, 2150, 1650, 1200
+        )
+        val maxScaleMl = 2500f
+        val maxBarHeightDp = 115f
+
+        val normalColor = getColor(R.color.primary_container)
+        val activeColor = getColor(R.color.wave_blue)
+        val horizontalMarginPx = dpToPx(2.5f)
+        val cornerRadiusPx = dpToPx(6f).toFloat()
+
+        dailyValuesMl.forEachIndexed { index, ml ->
+            val heightRatio = (ml / maxScaleMl).coerceIn(0.05f, 1f)
+            val barHeightPx = dpToPx(maxBarHeightDp * heightRatio)
+
+            val barCard = MaterialCardView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(0, barHeightPx, 1f).apply {
+                    marginStart = horizontalMarginPx
+                    marginEnd = horizontalMarginPx
+                }
+                radius = cornerRadiusPx
+                cardElevation = 0f
+                strokeWidth = 0
+                setCardBackgroundColor(if (index == dailyValuesMl.lastIndex) activeColor else normalColor)
+            }
+            container.addView(barCard)
+        }
     }
 
     private fun renderCalendarStrip() {
@@ -144,6 +201,7 @@ class HistoryActivity : AppCompatActivity() {
 
             dayView.setOnClickListener {
                 selectedDate = date
+                selectedMonth = YearMonth.from(date)
                 renderCalendarStrip()
             }
 
@@ -165,9 +223,18 @@ class HistoryActivity : AppCompatActivity() {
 
         picker.addOnPositiveButtonClickListener { millis ->
             selectedDate = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
+            selectedMonth = YearMonth.from(selectedDate)
             renderCalendarStrip()
         }
 
         picker.show(supportFragmentManager, "HISTORY_DATE_PICKER")
+    }
+
+    private fun dpToPx(dp: Float): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            resources.displayMetrics
+        ).toInt()
     }
 }

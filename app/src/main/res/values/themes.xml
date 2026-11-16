@@ -16,6 +16,8 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:fontFamily">@font/nunito</item>
         <item name="fontFamily">@font/nunito</item>
+
+        <item name="elevationOverlayEnabled">false</item>
     </style>
 
     <style name="Theme.Group2mts" parent="Base.Theme.Group2mts" />

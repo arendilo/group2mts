@@ -14,4 +14,9 @@
 
     <color name="streak_orange">#FF922E</color>
     <color name="coffee_brown">#A88B78</color>
+    <color name="tea_green">#7DBB87</color>
+    <color name="chart_grid_line">#E5EEF1</color>
+    <color name="tab_border">#CBE8F0</color>
+    <color name="card_shadow">#2E1D2D44</color>
+
 </resources>

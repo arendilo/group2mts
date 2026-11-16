@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">group2mts</string>
+
+    <string name="history_title">Your hydration story</string>
+    <string name="history_subtitle">Every kind of sip, in one place.</string>
+    <string name="tab_day">Day</string>
+    <string name="tab_month">Month</string>
+    <string name="tab_year">Year</string>
+    <string name="total_hydration_label">TOTAL HYDRATION</string>
+    <string name="badge_to_date">To date</string>
+    <string name="daily_hydration_chart_title">Daily hydration · ml</string>
+    <string name="drink_breakdown_title">Drink breakdown</string>
+    <string name="credited_label">Credited</string>
+    <string name="drink_water">Water</string>
+    <string name="drink_coffee">Coffee</string>
+    <string name="drink_tea">Tea</string>
 </resources>
