@@ -70,6 +70,26 @@ class HydrationRepository {
             filter { eq("user_id", uid); eq("target_date", date) }
         }.decodeSingleOrNull()
 
+    suspend fun getLogsBetween(startDate: String, endDate: String): List<DrinkLog> =
+        db.from("drink_logs").select {
+            filter {
+                eq("user_id", uid)
+                gte("logged_date", startDate)
+                lte("logged_date", endDate)
+            }
+            order("logged_at", Order.ASCENDING)
+        }.decodeList()
+
+    suspend fun getTargetsBetween(startDate: String, endDate: String): List<DailyTarget> =
+        db.from("daily_hydration_targets").select {
+            filter {
+                eq("user_id", uid)
+                gte("target_date", startDate)
+                lte("target_date", endDate)
+            }
+            order("target_date", Order.ASCENDING)
+        }.decodeList()
+
     // Streak RPC
     suspend fun getStreak(): Int =
         db.postgrest.rpc(

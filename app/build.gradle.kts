@@ -2,7 +2,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.0"
 }
 
 val localProps = Properties().apply {
@@ -54,6 +54,12 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xskip-metadata-version-check")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
@@ -72,4 +78,21 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+}
+
+configurations.all {
+    resolutionStrategy {
+        force(
+            "org.jetbrains.kotlin:kotlin-stdlib:2.2.0",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0",
+            "org.jetbrains.kotlin:kotlin-reflect:2.2.0"
+        )
+        eachDependency {
+            if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin-stdlib")) {
+                useVersion("2.2.0")
+                because("Keep kotlin-stdlib metadata compatible with Kotlin compiler 2.2.0")
+            }
+        }
+    }
 }

@@ -22,8 +22,9 @@
         android:orientation="horizontal"
         android:paddingVertical="10dp">
 
-        <!-- Blue circle with a white drop inside -->
+        <!-- Colored circle with a white drop inside -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardRecordIcon"
             style="@style/Widget.MTS.Card"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -36,7 +37,7 @@
                 android:layout_gravity="center"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_water_drop"
-                android:tint="@color/white" />
+                app:tint="@color/white" />
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
