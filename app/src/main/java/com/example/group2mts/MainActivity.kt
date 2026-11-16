@@ -1,41 +1,49 @@
 package com.example.group2mts
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
+import com.example.group2mts.data.DrinkLog
+import com.example.group2mts.data.GoalCalculator
+import com.example.group2mts.data.HydrationRepository
+import com.example.group2mts.data.SupabaseProvider
 import com.google.android.material.button.MaterialButton
+import io.github.jan.supabase.auth.auth
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 // One "sip" the user logged.
-data class DrinkRecord(val name: String, val amountMl: Int, val time: LocalTime)
-
+// consumedMl = volume yang diminum, creditedMl = volume yang dihitung ke target
+data class DrinkRecord(
+    val name: String,
+    val consumedMl: Int,
+    val creditedMl: Int,
+    val time: LocalTime
+)
 class MainActivity : AppCompatActivity() {
 
-    // ---- State (kept in memory for now; no database yet) ----
-    private val dailyGoalMl = 2000
-    private var selectedMl = 200 // which chip is active
-
-    // Newest first. Sample data = the numbers from the Figma design (500 + 350 + 350 = 1200).
-    private val records = mutableListOf(
-        DrinkRecord("Water", 500, LocalTime.of(11, 30)),
-        DrinkRecord("Water", 350, LocalTime.of(10, 0)),
-        DrinkRecord("Water", 350, LocalTime.of(8, 15)),
-    )
+    private val repo = HydrationRepository()
+    private var dailyGoalMl = 2000
+    private var selectedMl = 200
+    private var records: List<DrinkRecord> = emptyList()
 
     private val timeFormat = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH)
-
-    // Each chip button paired with the amount it stands for.
     private lateinit var chips: Map<MaterialButton, Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,9 +85,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         // The round "+" button logs a new drink using the selected amount.
-        findViewById<View>(R.id.fabAdd).setOnClickListener {
-            records.add(0, DrinkRecord("Water", selectedMl, LocalTime.now()))
-            render()
+        val fab = findViewById<View>(R.id.fabAdd)
+        fab.setOnClickListener {
+            fab.isEnabled = false
+            lifecycleScope.launch {
+                try {
+                    repo.logDrink("Water", "Water", "#1FB6D5", selectedMl, 100)
+                    reloadLogs()
+                } catch (e: Exception) {
+                    toast(e.message ?: "Failed to save drink")
+                } finally {
+                    fab.isEnabled = true
+                }
+            }
         }
 
         //history
@@ -89,7 +107,50 @@ class MainActivity : AppCompatActivity() {
 
         updateChips()
         render()
+        loadToday()
+
     }
+
+    // Cek sesi, pastikan target hari ini ada, lalu ambil log hari ini
+    private fun loadToday() {
+        lifecycleScope.launch {
+            try {
+                val auth = SupabaseProvider.client.auth
+                auth.awaitInitialization()
+                if (auth.currentSessionOrNull() == null) {
+                    startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
+                    finish()
+                    return@launch
+                }
+
+                val today = LocalDate.now().toString()
+                var target = repo.getTarget(today)
+                if (target == null) {
+                    target = GoalCalculator.build(repo.getProfile(), today)
+                    repo.upsertTodayTarget(target)
+                }
+                dailyGoalMl = target.totalGoalMl
+
+                reloadLogs()
+            } catch (e: Exception) {
+                toast(e.message ?: "Failed to load data")
+            }
+        }
+    }
+
+    private suspend fun reloadLogs() {
+        records = repo.getLogsForDate(LocalDate.now().toString()).map { it.toRecord() }
+        render()
+    }
+
+    private fun DrinkLog.toRecord() = DrinkRecord(
+        name = drinkName,
+        consumedMl = consumedMl,
+        creditedMl = creditedMl,
+        time = loggedAt?.let {
+            OffsetDateTime.parse(it).atZoneSameInstant(ZoneId.systemDefault()).toLocalTime()
+        } ?: LocalTime.now()
+    )
 
     // Selected chip = blue (Primary look), others = white (Secondary.Dark look).
     private fun updateChips() {
@@ -101,8 +162,8 @@ class MainActivity : AppCompatActivity() {
 
     // Re-draws everything that depends on `records`. Call it after any change.
     private fun render() {
-        val total = records.sumOf { it.amountMl }
-        val percent = (total * 100 / dailyGoalMl).coerceAtMost(100)
+        val total = records.sumOf { it.creditedMl }
+        val percent = if (dailyGoalMl > 0) (total * 100 / dailyGoalMl).coerceAtMost(100) else 0
 
         findViewById<TextView>(R.id.tvTotal).text = String.format(Locale.US, "%,d ml", total)
         findViewById<TextView>(R.id.tvGoal).text =
@@ -118,8 +179,10 @@ class MainActivity : AppCompatActivity() {
             row.findViewById<TextView>(R.id.tvRecordName).text = record.name
             row.findViewById<TextView>(R.id.tvRecordTime).text = record.time.format(timeFormat)
             row.findViewById<TextView>(R.id.tvRecordAmount).text =
-                String.format(Locale.US, "%,d ml", record.amountMl)
+                String.format(Locale.US, "%,d ml", record.consumedMl)
             list.addView(row)
         }
     }
+    private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+
 }
