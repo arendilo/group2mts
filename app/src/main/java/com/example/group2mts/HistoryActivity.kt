@@ -2,27 +2,36 @@ package com.example.group2mts
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.lifecycleScope
+import com.example.group2mts.data.DrinkLog
+import com.example.group2mts.data.HydrationRepository
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.MaterialDatePicker
-import java.text.NumberFormat
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
-import java.time.Month
+import java.time.LocalTime
+import java.time.OffsetDateTime
 import java.time.YearMonth
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -31,14 +40,16 @@ import java.util.Locale
 
 class HistoryActivity : AppCompatActivity() {
 
+    private val repo = HydrationRepository()
     private var selectedDate: LocalDate = LocalDate.now()
     private var selectedMonth: YearMonth = YearMonth.from(selectedDate)
-    private var selectedYear: Int = selectedDate.year
+    private var fallbackGoalMl: Int = 2000
+    private var isFirstResume = true
 
     private val headerDateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH)
     private val monthYearFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
     private val shortMonthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.ENGLISH)
-    private val numberFormat = NumberFormat.getNumberInstance(Locale.US)
+    private val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +76,9 @@ class HistoryActivity : AppCompatActivity() {
             insets
         }
 
+        // Streak - future development
+        findViewById<TextView>(R.id.tvStreakDays).text = "4 days"
+
         // Date picker
         findViewById<ImageButton>(R.id.btnCalendar).setOnClickListener {
             showCalendarPicker()
@@ -73,21 +87,11 @@ class HistoryActivity : AppCompatActivity() {
         // Month navigation
         findViewById<ImageButton>(R.id.btnPrevMonth).setOnClickListener {
             selectedMonth = selectedMonth.minusMonths(1)
-            renderMonthSection()
+            loadMonthData()
         }
         findViewById<ImageButton>(R.id.btnNextMonth).setOnClickListener {
             selectedMonth = selectedMonth.plusMonths(1)
-            renderMonthSection()
-        }
-
-        // Year navigation
-        findViewById<ImageButton>(R.id.btnPrevYear).setOnClickListener {
-            selectedYear -= 1
-            renderYearSection()
-        }
-        findViewById<ImageButton>(R.id.btnNextYear).setOnClickListener {
-            selectedYear += 1
-            renderYearSection()
+            loadMonthData()
         }
 
         // Period tabs
@@ -98,10 +102,28 @@ class HistoryActivity : AppCompatActivity() {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
+        findViewById<View>(R.id.navGoals).setOnClickListener {
+            startActivity(Intent(this, DrinkShelfActivity::class.java))
+        }
+        findViewById<View>(R.id.navProfile).setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
+        findViewById<View>(R.id.fabAdd).setOnClickListener {
+            startActivity(Intent(this, LogDrinkActivity::class.java))
+        }
 
-        renderCalendarStrip()
-        renderMonthSection()
-        renderYearSection()
+        loadDayData()
+        loadMonthData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isFirstResume) {
+            isFirstResume = false
+            return
+        }
+        loadDayData()
+        loadMonthData()
     }
 
     private fun setupPeriodTabs() {
@@ -111,63 +133,334 @@ class HistoryActivity : AppCompatActivity() {
         val yearContainer = findViewById<View>(R.id.layoutYearContainer)
 
         fun switchMode(mode: String) {
-            dayContainer.isVisible = mode == "Day"
-            monthContainer.isVisible = mode == "Month"
-            yearContainer.isVisible = mode == "Year"
-
-            when (mode) {
-                "Month" -> renderMonthSection()
-                "Year" -> renderYearSection()
-            }
+            dayContainer.isVisible = (mode == "Day")
+            monthContainer.isVisible = (mode == "Month")
+            yearContainer.isVisible = (mode == "Year")
+            if (mode == "Month") loadMonthData()
+            if (mode == "Day") loadDayData()
             scrollHistory.scrollTo(0, 0)
         }
 
-        // Day view tabs
         findViewById<MaterialCardView>(R.id.cardTabDay).setOnClickListener { switchMode("Day") }
         findViewById<MaterialCardView>(R.id.cardTabMonth).setOnClickListener { switchMode("Month") }
         findViewById<MaterialCardView>(R.id.cardTabYear).setOnClickListener { switchMode("Year") }
 
-        // Month view tabs
         findViewById<MaterialCardView>(R.id.cardMonthTabDay).setOnClickListener { switchMode("Day") }
         findViewById<MaterialCardView>(R.id.cardMonthTabMonth).setOnClickListener { switchMode("Month") }
         findViewById<MaterialCardView>(R.id.cardMonthTabYear).setOnClickListener { switchMode("Year") }
 
-        // Year view tabs
         findViewById<MaterialCardView>(R.id.cardYearTabDay).setOnClickListener { switchMode("Day") }
         findViewById<MaterialCardView>(R.id.cardYearTabMonth).setOnClickListener { switchMode("Month") }
         findViewById<MaterialCardView>(R.id.cardYearTabYear).setOnClickListener { switchMode("Year") }
     }
 
-    private fun renderMonthSection() {
+    private fun loadDayData() {
+        lifecycleScope.launch {
+            try {
+                val profile = repo.getProfile()
+                fallbackGoalMl = profile.customGoalMl
+
+                val startOfWeek = selectedDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
+                val endOfWeek = startOfWeek.plusDays(6)
+
+                val weekLogs = repo.getLogsBetween(startOfWeek.toString(), endOfWeek.toString())
+                val datesWithLogs = weekLogs.mapNotNull { it.loggedDate }.toSet()
+
+                renderCalendarStrip(datesWithLogs)
+
+                val selectedDateStr = selectedDate.toString()
+                val dayLogs = weekLogs.filter { it.loggedDate == selectedDateStr }
+                val target = repo.getTarget(selectedDateStr)
+                val goalMl = target?.totalGoalMl ?: fallbackGoalMl
+
+                renderDayGoalCard(dayLogs, goalMl)
+                renderTodaysRhythm(dayLogs)
+                renderDayBreakdown(dayLogs)
+            } catch (e: Exception) {
+                renderCalendarStrip(emptySet())
+                toast(e.message ?: "Failed to load history")
+            }
+        }
+    }
+
+    private fun renderDayGoalCard(logs: List<DrinkLog>, goalMl: Int) {
+        val totalConsumed = logs.sumOf { it.consumedMl }
+        val totalCredited = logs.sumOf { it.creditedMl }
+        val percent = if (goalMl > 0) (totalCredited * 100 / goalMl).coerceAtMost(100) else 0
+
+        findViewById<TextView>(R.id.tvHistoryTotalMl).text =
+            String.format(Locale.US, "%,d ml", totalCredited)
+        findViewById<TextView>(R.id.tvHistoryGoal).text =
+            String.format(Locale.US, "of %,d ml daily goal", goalMl)
+        findViewById<TextView>(R.id.tvHistoryPercent).text = "$percent%"
+        findViewById<TextView>(R.id.tvConsumedCredited).text =
+            String.format(Locale.US, "%,d ml consumed · %,d ml credited", totalConsumed, totalCredited)
+    }
+
+    private fun renderTodaysRhythm(logs: List<DrinkLog>) {
+        val today = LocalDate.now()
+        findViewById<TextView>(R.id.tvRhythmTitle).text =
+            if (selectedDate == today) "Today’s rhythm" else "${selectedDate.format(shortMonthFormatter)} ${selectedDate.dayOfMonth} rhythm"
+
+        // 6 two-hour buckets matching bar08, bar10, bar12, bar14, bar16, bar18
+        val bucketKeys = listOf(8, 10, 12, 14, 16, 18)
+        val bucketViews = mapOf(
+            8 to findViewById<MaterialCardView>(R.id.bar08),
+            10 to findViewById<MaterialCardView>(R.id.bar10),
+            12 to findViewById<MaterialCardView>(R.id.bar12),
+            14 to findViewById<MaterialCardView>(R.id.bar14),
+            16 to findViewById<MaterialCardView>(R.id.bar16),
+            18 to findViewById<MaterialCardView>(R.id.bar18),
+        )
+
+        val bucketLogs = bucketKeys.associateWith { mutableListOf<DrinkLog>() }
+        logs.forEach { log ->
+            val hour = log.loggedAt?.let {
+                OffsetDateTime.parse(it).atZoneSameInstant(ZoneId.systemDefault()).hour
+            } ?: 12
+            val bucket = when {
+                hour < 10 -> 8
+                hour < 12 -> 10
+                hour < 14 -> 12
+                hour < 16 -> 14
+                hour < 18 -> 16
+                else -> 18
+            }
+            bucketLogs[bucket]?.add(log)
+        }
+
+        val bucketTotals = bucketKeys.associateWith { key ->
+            bucketLogs[key]?.sumOf { it.creditedMl } ?: 0
+        }
+        val maxScaleMl = maxOf(800, bucketTotals.values.maxOrNull() ?: 800).toFloat()
+        val maxBarHeightDp = 114f
+        val emptyColor = getColor(R.color.primary_container)
+        val defaultActiveColor = getColor(R.color.wave_blue)
+
+        bucketKeys.forEach { key ->
+            val bar = bucketViews[key] ?: return@forEach
+            val totalMl = bucketTotals[key] ?: 0
+            val logsInBucket = bucketLogs[key].orEmpty()
+
+            val lp = bar.layoutParams
+            if (totalMl <= 0) {
+                lp.height = dpToPx(4f)
+                bar.radius = dpToPx(2f).toFloat()
+                bar.setCardBackgroundColor(emptyColor)
+            } else {
+                val ratio = (totalMl / maxScaleMl).coerceIn(0.12f, 1f)
+                lp.height = dpToPx(maxBarHeightDp * ratio)
+                bar.radius = dpToPx(12f).toFloat()
+
+                // Use the color of the largest drink in that time bucket
+                val dominantHex = logsInBucket.maxByOrNull { it.creditedMl }?.colorHex
+                val barColor = dominantHex?.let {
+                    runCatching { Color.parseColor(it) }.getOrNull()
+                } ?: defaultActiveColor
+                bar.setCardBackgroundColor(barColor)
+            }
+            bar.layoutParams = lp
+        }
+    }
+
+    private fun renderDayBreakdown(logs: List<DrinkLog>) {
+        val listBreakdown = findViewById<LinearLayout>(R.id.listBreakdown)
+        listBreakdown.removeAllViews()
+
+        if (logs.isEmpty()) {
+            val emptyCard = createBreakdownCard(
+                colorHex = "#9CE3EF",
+                title = "No drinks logged",
+                subtitle = "No records found for this date",
+                rightText = "0 ml",
+                topMarginDp = 0
+            )
+            listBreakdown.addView(emptyCard)
+            return
+        }
+
+        // Group by drinkName (preserving order of total credited volume)
+        val grouped = logs.groupBy { it.drinkName }
+            .values
+            .sortedByDescending { group -> group.sumOf { it.creditedMl } }
+
+        grouped.forEachIndexed { index, group ->
+            val first = group.first()
+            val totalConsumed = group.sumOf { it.consumedMl }
+            val totalCredited = group.sumOf { it.creditedMl }
+
+            val subtitle = if (group.size == 1) {
+                val timeText = first.loggedAt?.let {
+                    OffsetDateTime.parse(it).atZoneSameInstant(ZoneId.systemDefault())
+                        .toLocalTime().format(timeFormatter)
+                } ?: LocalTime.now().format(timeFormatter)
+                String.format(Locale.US, "%,d ml · %s", totalConsumed, timeText)
+            } else {
+                String.format(Locale.US, "%,d ml · %d drinks", totalConsumed, group.size)
+            }
+
+            val card = createBreakdownCard(
+                colorHex = first.colorHex,
+                title = first.drinkName,
+                subtitle = subtitle,
+                rightText = String.format(Locale.US, "%,d ml", totalCredited),
+                topMarginDp = if (index == 0) 0 else 10
+            )
+            listBreakdown.addView(card)
+        }
+    }
+
+    private fun createBreakdownCard(
+        colorHex: String,
+        title: String,
+        subtitle: String?,
+        rightText: String,
+        topMarginDp: Int
+    ): MaterialCardView {
+        val nunitoBold = ResourcesCompat.getFont(this, R.font.nunito_bold)
+        val nunitoExtraBold = ResourcesCompat.getFont(this, R.font.nunito_extrabold)
+        val nunitoRegular = ResourcesCompat.getFont(this, R.font.nunito)
+
+        val card = MaterialCardView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                if (topMarginDp > 0) topMargin = dpToPx(topMarginDp.toFloat())
+            }
+            radius = dpToPx(16f).toFloat()
+            cardElevation = dpToPx(4f).toFloat()
+            strokeWidth = 0
+            setCardBackgroundColor(getColor(R.color.white))
+        }
+
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            val pad = dpToPx(16f)
+            setPadding(pad, pad, pad, pad)
+        }
+
+        val accentColor = runCatching { Color.parseColor(colorHex) }
+            .getOrDefault(getColor(R.color.wave_blue))
+
+        val pill = MaterialCardView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(dpToPx(6f), dpToPx(34f))
+            radius = dpToPx(3f).toFloat()
+            cardElevation = 0f
+            strokeWidth = 0
+            setCardBackgroundColor(accentColor)
+        }
+        row.addView(pill)
+
+        val textCol = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                marginStart = dpToPx(14f)
+            }
+        }
+
+        val tvTitle = TextView(this).apply {
+            text = title
+            textSize = 16f
+            setTextColor(getColor(R.color.on_background))
+            typeface = nunitoBold ?: Typeface.DEFAULT_BOLD
+        }
+        textCol.addView(tvTitle)
+
+        if (!subtitle.isNullOrBlank()) {
+            val tvSub = TextView(this).apply {
+                text = subtitle
+                textSize = 12f
+                setTextColor(getColor(R.color.muted))
+                typeface = nunitoRegular ?: Typeface.DEFAULT
+            }
+            textCol.addView(tvSub)
+        }
+        row.addView(textCol)
+
+        val tvRight = TextView(this).apply {
+            text = rightText
+            textSize = 15f
+            setTextColor(getColor(R.color.on_background))
+            typeface = nunitoExtraBold ?: Typeface.DEFAULT_BOLD
+        }
+        row.addView(tvRight)
+
+        card.addView(row)
+        return card
+    }
+
+    private fun loadMonthData() {
         findViewById<TextView>(R.id.tvMonthYearTitle).text =
             selectedMonth.format(monthYearFormatter)
 
+        val today = LocalDate.now()
+        val startOfMonth = selectedMonth.atDay(1)
+        val endOfMonth = if (selectedMonth == YearMonth.from(today)) today else selectedMonth.atEndOfMonth()
+
         val shortMonth = selectedMonth.format(shortMonthFormatter)
         findViewById<TextView>(R.id.tvMonthPeriodRange).text =
-            "$shortMonth 1–14 · hydration credited"
+            "$shortMonth 1–${endOfMonth.dayOfMonth} · hydration credited"
 
-        renderMonthBars()
+        lifecycleScope.launch {
+            try {
+                if (startOfMonth.isAfter(today)) {
+                    renderMonthStats(emptyList(), emptyList(), startOfMonth, endOfMonth)
+                    return@launch
+                }
+                val logs = repo.getLogsBetween(startOfMonth.toString(), endOfMonth.toString())
+                val targets = repo.getTargetsBetween(startOfMonth.toString(), endOfMonth.toString())
+                renderMonthStats(logs, targets, startOfMonth, endOfMonth)
+            } catch (_: Exception) {
+                // Keep UI responsive on network hiccup
+            }
+        }
     }
 
-    private fun renderMonthBars() {
+    private fun renderMonthStats(
+        logs: List<DrinkLog>,
+        targets: List<com.example.group2mts.data.DailyTarget>,
+        startOfMonth: LocalDate,
+        endOfMonth: LocalDate
+    ) {
+        val totalDaysCount = (endOfMonth.dayOfMonth - startOfMonth.dayOfMonth + 1).coerceAtLeast(1)
+        val totalCreditedMl = logs.sumOf { it.creditedMl }
+        val totalLitres = totalCreditedMl / 1000.0
+        val dailyAvgMl = totalCreditedMl / totalDaysCount
+
+        val logsByDate = logs.groupBy { it.loggedDate }
+        val targetsByDate = targets.associateBy { it.targetDate }
+
+        var goalDaysMet = 0
+        val dailyValuesMl = mutableListOf<Int>()
+        for (dayNum in 1..endOfMonth.dayOfMonth) {
+            val dStr = selectedMonth.atDay(dayNum).toString()
+            val dayCredited = logsByDate[dStr]?.sumOf { it.creditedMl } ?: 0
+            val dayGoal = targetsByDate[dStr]?.totalGoalMl ?: fallbackGoalMl
+            if (dayCredited >= dayGoal && dayGoal > 0) goalDaysMet++
+            dailyValuesMl.add(dayCredited)
+        }
+
+        findViewById<TextView>(R.id.tvMonthTotalLitres).text =
+            String.format(Locale.US, "%.1f L", totalLitres)
+        findViewById<TextView>(R.id.tvMonthDailyAvg).text =
+            String.format(Locale.US, "Daily avg: %,d ml", dailyAvgMl)
+        findViewById<TextView>(R.id.tvMonthGoalDays).text =
+            "Goal days: $goalDaysMet / $totalDaysCount"
+
+        // Render bars
         val container = findViewById<LinearLayout>(R.id.layoutMonthBarsContainer)
         container.removeAllViews()
-
-        // Chart data
-        val dailyValuesMl = listOf(
-            1650, 1850, 2150, 1950, 2050, 2100, 2250,
-            2150, 2350, 2300, 2150, 2150, 1650, 1200
-        )
-        val maxScaleMl = 2500f
+        val maxScaleMl = maxOf(2500, dailyValuesMl.maxOrNull() ?: 2500).toFloat()
         val maxBarHeightDp = 115f
-
         val normalColor = getColor(R.color.primary_container)
         val activeColor = getColor(R.color.wave_blue)
-        val horizontalMarginPx = dpToPx(2.5f)
-        val cornerRadiusPx = dpToPx(6f).toFloat()
+        val horizontalMarginPx = dpToPx(1.5f)
+        val cornerRadiusPx = dpToPx(4f).toFloat()
 
         dailyValuesMl.forEachIndexed { index, ml ->
-            val heightRatio = (ml / maxScaleMl).coerceIn(0.05f, 1f)
+            val heightRatio = if (ml <= 0) 0.04f else (ml / maxScaleMl).coerceIn(0.06f, 1f)
             val barHeightPx = dpToPx(maxBarHeightDp * heightRatio)
 
             val barCard = MaterialCardView(this).apply {
@@ -182,100 +475,39 @@ class HistoryActivity : AppCompatActivity() {
             }
             container.addView(barCard)
         }
-    }
 
-    private fun renderYearSection() {
-        findViewById<TextView>(R.id.tvYearTitle).text = selectedYear.toString()
+        // Render Month Drink Breakdown
+        val monthBreakdown = findViewById<LinearLayout>(R.id.listMonthBreakdown)
+        monthBreakdown.removeAllViews()
 
-        val monthlyLitres = if (selectedYear == 2026) {
-            listOf(55.8f, 52.8f, 58.8f, 56.8f, 60.8f, 58.8f, 64.8f, 62.8f, 57.8f, 54.0f, 27.3f, 0f)
-        } else {
-            listOf(52.0f, 50.5f, 56.0f, 54.5f, 58.0f, 61.0f, 63.5f, 60.0f, 55.0f, 53.5f, 51.0f, 54.0f)
+        if (logs.isEmpty()) {
+            monthBreakdown.addView(
+                createBreakdownCard("#9CE3EF", "No drinks this period", null, "0.0 L", 0)
+            )
+            return
         }
 
-        val totalLitres = monthlyLitres.sum()
-        val bestMonthIndex = monthlyLitres.indices.maxByOrNull { monthlyLitres[it] } ?: 6
-        val bestMonthName = Month.of(bestMonthIndex + 1)
-            .getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+        val grouped = logs.groupBy { it.drinkName }
+            .values
+            .sortedByDescending { group -> group.sumOf { it.creditedMl } }
 
-        val elapsedDays = if (selectedYear == 2026) 318 else 365
-        val dailyAvgMl = ((totalLitres * 1000f) / elapsedDays).toInt()
-        val formattedAvg = numberFormat.format(dailyAvgMl)
-
-        val periodRange = if (selectedYear == 2026) {
-            "Jan 1–Nov 14 · hydration credited"
-        } else {
-            "Jan 1–Dec 31 · hydration credited"
-        }
-
-        val waterLitres = if (selectedYear == 2026) 500f else totalLitres * 0.82f
-        val coffeeLitres = if (selectedYear == 2026) 80f else totalLitres * 0.13f
-        val teaLitres = if (selectedYear == 2026) 30.5f else totalLitres * 0.05f
-
-        findViewById<TextView>(R.id.tvYearTotalLitres).text = formatLitres(totalLitres)
-        findViewById<TextView>(R.id.tvYearPeriodRange).text = periodRange
-        findViewById<TextView>(R.id.tvYearDailyAvg).text = "Daily avg: $formattedAvg ml"
-        findViewById<TextView>(R.id.tvYearBestMonth).text =
-            getString(R.string.best_month_format, bestMonthName)
-
-        findViewById<TextView>(R.id.tvYearWaterLitres).text = formatLitres(waterLitres)
-        findViewById<TextView>(R.id.tvYearCoffeeLitres).text = formatLitres(coffeeLitres)
-        findViewById<TextView>(R.id.tvYearTeaLitres).text = formatLitres(teaLitres)
-
-        renderYearBars(monthlyLitres, bestMonthIndex)
-    }
-
-    private fun renderYearBars(monthlyLitres: List<Float>, bestMonthIndex: Int) {
-        val container = findViewById<LinearLayout>(R.id.layoutYearBarsContainer)
-        container.removeAllViews()
-
-        val maxScaleLitres = 70f
-        val maxBarHeightDp = 115f
-
-        val normalColor = getColor(R.color.primary_container)
-        val activeColor = getColor(R.color.wave_blue)
-        val emptyColor = getColor(R.color.chart_grid_line)
-        val horizontalMarginPx = dpToPx(3.5f)
-        val cornerRadiusPx = dpToPx(7f).toFloat()
-
-        monthlyLitres.forEachIndexed { index, litres ->
-            val isZero = litres <= 0f
-            val barHeightPx = if (isZero) {
-                dpToPx(2f)
-            } else {
-                val heightRatio = (litres / maxScaleLitres).coerceIn(0.05f, 1f)
-                dpToPx(maxBarHeightDp * heightRatio)
-            }
-
-            val barColor = when {
-                isZero -> emptyColor
-                index == bestMonthIndex -> activeColor
-                else -> normalColor
-            }
-
-            val barCard = MaterialCardView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(0, barHeightPx, 1f).apply {
-                    marginStart = horizontalMarginPx
-                    marginEnd = horizontalMarginPx
-                }
-                radius = if (isZero) dpToPx(1f).toFloat() else cornerRadiusPx
-                cardElevation = 0f
-                strokeWidth = 0
-                setCardBackgroundColor(barColor)
-            }
-            container.addView(barCard)
+        grouped.forEachIndexed { index, group ->
+            val first = group.first()
+            val litres = group.sumOf { it.creditedMl } / 1000.0
+            monthBreakdown.addView(
+                createBreakdownCard(
+                    colorHex = first.colorHex,
+                    title = first.drinkName,
+                    subtitle = "${group.size} logs this period",
+                    rightText = String.format(Locale.US, "%.1f L", litres),
+                    topMarginDp = if (index == 0) 0 else 10
+                )
+            )
         }
     }
 
-    private fun formatLitres(litres: Float): String {
-        return if (litres % 1f == 0f) {
-            "${litres.toInt()} L"
-        } else {
-            String.format(Locale.US, "%.1f L", litres)
-        }
-    }
 
-    private fun renderCalendarStrip() {
+    private fun renderCalendarStrip(datesWithLogs: Set<String>) {
         val container = findViewById<LinearLayout>(R.id.layoutWeekDays)
         container.removeAllViews()
 
@@ -293,6 +525,7 @@ class HistoryActivity : AppCompatActivity() {
 
             val isToday = date == today
             val isSelected = date == selectedDate
+            val hasRecord = datesWithLogs.contains(date.toString())
 
             if (isToday) {
                 tvDayLabel.text = "TODAY"
@@ -313,14 +546,13 @@ class HistoryActivity : AppCompatActivity() {
             } else {
                 cardDateCircle.setCardBackgroundColor(Color.TRANSPARENT)
                 tvDayNumber.setTextColor(getColor(R.color.on_background))
-                dotHasRecord.visibility = if (!date.isAfter(today)) View.VISIBLE else View.INVISIBLE
+                dotHasRecord.visibility = if (hasRecord) View.VISIBLE else View.INVISIBLE
             }
 
             dayView.setOnClickListener {
                 selectedDate = date
                 selectedMonth = YearMonth.from(date)
-                selectedYear = date.year
-                renderCalendarStrip()
+                loadDayData()
             }
 
             container.addView(dayView)
@@ -342,8 +574,7 @@ class HistoryActivity : AppCompatActivity() {
         picker.addOnPositiveButtonClickListener { millis ->
             selectedDate = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
             selectedMonth = YearMonth.from(selectedDate)
-            selectedYear = selectedDate.year
-            renderCalendarStrip()
+            loadDayData()
         }
 
         picker.show(supportFragmentManager, "HISTORY_DATE_PICKER")
@@ -356,4 +587,6 @@ class HistoryActivity : AppCompatActivity() {
             resources.displayMetrics
         ).toInt()
     }
+
+    private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 }

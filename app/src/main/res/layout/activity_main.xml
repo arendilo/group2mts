@@ -87,6 +87,7 @@
                     android:padding="16dp">
 
                     <ImageView
+                        android:id="@+id/ivWeatherIcon"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:contentDescription="@null"
@@ -101,17 +102,19 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvWeatherTempCondition"
                             style="@style/Widget.MTS.Text.Body"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="32°C Sunny"
+                            android:text="Loading weather..."
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvWeatherAdvice"
                             style="@style/Widget.MTS.Text.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Hot weather! +300 ml recommended today" />
+                            android:text="Checking hydration recommendation..." />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

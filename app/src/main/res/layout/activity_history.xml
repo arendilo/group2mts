@@ -1269,6 +1269,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/listMonthBreakdown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
@@ -1427,752 +1428,147 @@
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </LinearLayout>
-            <!--INI BUAT YG YEAR-->
+
+            <!--Year Placeholder-->
             <LinearLayout
                 android:id="@+id/layoutYearContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipChildren="false"
-                android:clipToPadding="false"
                 android:orientation="vertical"
+                android:paddingHorizontal="20dp"
                 android:paddingTop="20dp"
                 android:paddingBottom="24dp"
-                android:visibility="gone"
-                tools:visibility="gone">
+                android:visibility="gone">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    style="@style/Widget.MTS.Text.Heading2"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="20dp">
+                    android:text="@string/history_title"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        style="@style/Widget.MTS.Text.Heading2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/history_title"
-                        android:textSize="24sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:fontFamily="@font/nunito_semibold"
-                        app:fontFamily="@font/nunito_semibold"
-                        android:text="@string/history_subtitle"
-                        android:textColor="@color/muted"
-                        android:textSize="13sp" />
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="44dp"
-                        android:layout_marginTop="18dp"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="22dp"
-                        app:cardElevation="0dp"
-                        app:strokeColor="@color/tab_border"
-                        app:strokeWidth="1dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal"
-                            android:padding="4dp">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/cardYearTabDay"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                app:cardBackgroundColor="@android:color/transparent"
-                                app:cardCornerRadius="18dp"
-                                app:cardElevation="0dp"
-                                app:strokeWidth="0dp">
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:fontFamily="@font/nunito_bold"
-                                    app:fontFamily="@font/nunito_bold"
-                                    android:gravity="center"
-                                    android:text="@string/tab_day"
-                                    android:textColor="@color/on_background"
-                                    android:textSize="14sp" />
-                            </com.google.android.material.card.MaterialCardView>
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/cardYearTabMonth"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                app:cardBackgroundColor="@android:color/transparent"
-                                app:cardCornerRadius="18dp"
-                                app:cardElevation="0dp"
-                                app:strokeWidth="0dp">
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:fontFamily="@font/nunito_bold"
-                                    app:fontFamily="@font/nunito_bold"
-                                    android:gravity="center"
-                                    android:text="@string/tab_month"
-                                    android:textColor="@color/on_background"
-                                    android:textSize="14sp" />
-                            </com.google.android.material.card.MaterialCardView>
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/cardYearTabYear"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                app:cardBackgroundColor="@color/wave_blue"
-                                app:cardCornerRadius="18dp"
-                                app:cardElevation="0dp"
-                                app:strokeWidth="0dp">
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:fontFamily="@font/nunito_bold"
-                                    app:fontFamily="@font/nunito_bold"
-                                    android:gravity="center"
-                                    android:text="@string/tab_year"
-                                    android:textColor="@color/white"
-                                    android:textSize="14sp" />
-                            </com.google.android.material.card.MaterialCardView>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageButton
-                            android:id="@+id/btnPrevYear"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="@null"
-                            android:padding="8dp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_chevron_left" />
-
-                        <TextView
-                            android:id="@+id/tvYearTitle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/nunito_extrabold"
-                            app:fontFamily="@font/nunito_extrabold"
-                            android:gravity="center"
-                            android:text="2026"
-                            android:textColor="@color/on_background"
-                            android:textSize="15sp" />
-
-                        <ImageButton
-                            android:id="@+id/btnNextYear"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="@null"
-                            android:padding="8dp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_chevron_right" />
-                    </LinearLayout>
-                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/nunito_semibold"
+                    app:fontFamily="@font/nunito_semibold"
+                    android:text="@string/history_subtitle"
+                    android:textColor="@color/muted"
+                    android:textSize="13sp" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="10dp"
-                    android:outlineAmbientShadowColor="@color/card_shadow"
-                    android:outlineSpotShadowColor="@color/card_shadow"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="18dp"
                     app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="4dp"
-                    app:cardForegroundColor="@android:color/transparent"
-                    app:strokeWidth="0dp"
-                    tools:targetApi="p">
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/tab_border"
+                    app:strokeWidth="1dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="top"
+                        android:layout_height="match_parent"
                         android:orientation="horizontal"
-                        android:padding="20dp">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/nunito_extrabold"
-                                app:fontFamily="@font/nunito_extrabold"
-                                android:letterSpacing="0.04"
-                                android:text="@string/total_hydration_label"
-                                android:textColor="@color/muted"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/tvYearTotalLitres"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:fontFamily="@font/nunito_extrabold"
-                                app:fontFamily="@font/nunito_extrabold"
-                                android:text="610.5 L"
-                                android:textColor="@color/on_background"
-                                android:textSize="34sp" />
-
-                            <TextView
-                                android:id="@+id/tvYearPeriodRange"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:fontFamily="@font/nunito_regular"
-                                app:fontFamily="@font/nunito_regular"
-                                android:text="Jan 1–Nov 14 · hydration credited"
-                                android:textColor="@color/muted"
-                                android:textSize="12sp" />
-                        </LinearLayout>
+                        android:padding="4dp">
 
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/cardYearBadge"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:cardBackgroundColor="@color/accent_warning"
-                            app:cardCornerRadius="20dp"
+                            android:id="@+id/cardYearTabDay"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@android:color/transparent"
+                            app:cardCornerRadius="18dp"
                             app:cardElevation="0dp"
                             app:strokeWidth="0dp">
 
                             <TextView
-                                android:id="@+id/tvYearBadge"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/nunito_extrabold"
-                                app:fontFamily="@font/nunito_extrabold"
-                                android:paddingHorizontal="16dp"
-                                android:paddingVertical="7dp"
-                                android:text="@string/badge_to_date"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:fontFamily="@font/nunito_bold"
+                                app:fontFamily="@font/nunito_bold"
+                                android:gravity="center"
+                                android:text="@string/tab_day"
                                 android:textColor="@color/on_background"
-                                android:textSize="13sp" />
+                                android:textSize="14sp" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardYearTabMonth"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@android:color/transparent"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:fontFamily="@font/nunito_bold"
+                                app:fontFamily="@font/nunito_bold"
+                                android:gravity="center"
+                                android:text="@string/tab_month"
+                                android:textColor="@color/on_background"
+                                android:textSize="14sp" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardYearTabYear"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/wave_blue"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:fontFamily="@font/nunito_bold"
+                                app:fontFamily="@font/nunito_bold"
+                                android:gravity="center"
+                                android:text="@string/tab_year"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
                         </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="14dp"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="6dp"
-                        android:layout_weight="1"
-                        app:cardBackgroundColor="@color/primary_container"
-                        app:cardCornerRadius="20dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="0dp">
-
-                        <TextView
-                            android:id="@+id/tvYearDailyAvg"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:fontFamily="@font/nunito_extrabold"
-                            app:fontFamily="@font/nunito_extrabold"
-                            android:gravity="center"
-                            android:text="Daily avg: 1,920 ml"
-                            android:textColor="@color/on_background"
-                            android:textSize="13sp" />
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="6dp"
-                        android:layout_weight="1"
-                        app:cardBackgroundColor="@color/accent_warning"
-                        app:cardCornerRadius="20dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="0dp">
-
-                        <TextView
-                            android:id="@+id/tvYearBestMonth"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:fontFamily="@font/nunito_extrabold"
-                            app:fontFamily="@font/nunito_extrabold"
-                            android:gravity="center"
-                            android:text="Best month: July"
-                            android:textColor="@color/on_background"
-                            android:textSize="13sp" />
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
-
                 <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.MTS.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="16dp"
-                    android:outlineAmbientShadowColor="@color/card_shadow"
-                    android:outlineSpotShadowColor="@color/card_shadow"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="4dp"
-                    app:cardForegroundColor="@android:color/transparent"
-                    app:strokeWidth="0dp"
-                    tools:targetApi="p">
+                    android:layout_marginTop="20dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="20dp">
+                        android:padding="28dp">
 
                         <TextView
                             style="@style/Widget.MTS.Text.Heading2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/monthly_hydration_chart_title"
-                            android:textSize="18sp" />
+                            android:text="Yearly Overview" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="145dp"
-                            android:layout_marginTop="14dp"
-                            android:orientation="horizontal">
-
-                            <LinearLayout
-                                android:layout_width="26dp"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                android:paddingBottom="22dp">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="0dp"
-                                    android:layout_weight="1"
-                                    android:fontFamily="@font/nunito_regular"
-                                    app:fontFamily="@font/nunito_regular"
-                                    android:text="70"
-                                    android:textColor="@color/muted"
-                                    android:textSize="10sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="0dp"
-                                    android:layout_weight="1"
-                                    android:fontFamily="@font/nunito_regular"
-                                    app:fontFamily="@font/nunito_regular"
-                                    android:gravity="center_vertical"
-                                    android:text="35"
-                                    android:textColor="@color/muted"
-                                    android:textSize="10sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/nunito_regular"
-                                    app:fontFamily="@font/nunito_regular"
-                                    android:text="0"
-                                    android:textColor="@color/muted"
-                                    android:textSize="10sp" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <FrameLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="0dp"
-                                    android:layout_weight="1">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:orientation="vertical"
-                                        android:paddingTop="6dp">
-
-                                        <View
-                                            android:layout_width="match_parent"
-                                            android:layout_height="1dp"
-                                            android:background="@color/chart_grid_line" />
-
-                                        <Space
-                                            android:layout_width="match_parent"
-                                            android:layout_height="0dp"
-                                            android:layout_weight="1" />
-
-                                        <View
-                                            android:layout_width="match_parent"
-                                            android:layout_height="1dp"
-                                            android:background="@color/chart_grid_line" />
-
-                                        <Space
-                                            android:layout_width="match_parent"
-                                            android:layout_height="0dp"
-                                            android:layout_weight="1" />
-
-                                        <View
-                                            android:layout_width="match_parent"
-                                            android:layout_height="1dp"
-                                            android:background="@color/chart_grid_line" />
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:id="@+id/layoutYearBarsContainer"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:gravity="bottom"
-                                        android:orientation="horizontal" />
-                                </FrameLayout>
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="22dp"
-                                    android:gravity="bottom"
-                                    android:orientation="horizontal">
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_jan"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_feb"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_mar"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_apr"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_may"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_jun"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_jul"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_aug"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_sep"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_oct"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_nov"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/nunito_regular"
-                                        app:fontFamily="@font/nunito_regular"
-                                        android:gravity="center"
-                                        android:text="@string/month_dec"
-                                        android:textColor="@color/muted"
-                                        android:textSize="10sp" />
-                                </LinearLayout>
-                            </LinearLayout>
-                        </LinearLayout>
+                        <TextView
+                            style="@style/Widget.MTS.Text.Body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center"
+                            android:text="12-month hydration trends are coming soon. Switch to Day or Month above to inspect your live Supabase records!"
+                            android:textColor="@color/muted" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/Widget.MTS.Text.Heading2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/drink_breakdown_title"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/nunito_bold"
-                        app:fontFamily="@font/nunito_bold"
-                        android:text="@string/credited_label"
-                        android:textColor="@color/muted"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="12dp"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:outlineAmbientShadowColor="@color/card_shadow"
-                        android:outlineSpotShadowColor="@color/card_shadow"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="4dp"
-                        app:cardForegroundColor="@android:color/transparent"
-                        app:strokeWidth="0dp"
-                        tools:targetApi="p">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="16dp">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:layout_width="6dp"
-                                android:layout_height="32dp"
-                                app:cardBackgroundColor="@color/wave_blue"
-                                app:cardCornerRadius="3dp"
-                                app:cardElevation="0dp"
-                                app:strokeWidth="0dp" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="14dp"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/nunito_extrabold"
-                                app:fontFamily="@font/nunito_extrabold"
-                                android:text="@string/drink_water"
-                                android:textColor="@color/on_background"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/tvYearWaterLitres"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/nunito_extrabold"
-                                app:fontFamily="@font/nunito_extrabold"
-                                android:text="500 L"
-                                android:textColor="@color/on_background"
-                                android:textSize="15sp" />
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:outlineAmbientShadowColor="@color/card_shadow"
-                        android:outlineSpotShadowColor="@color/card_shadow"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="4dp"
-                        app:cardForegroundColor="@android:color/transparent"
-                        app:strokeWidth="0dp"
-                        tools:targetApi="p">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="16dp">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:layout_width="6dp"
-                                android:layout_height="32dp"
-                                app:cardBackgroundColor="@color/coffee_brown"
-                                app:cardCornerRadius="3dp"
-                                app:cardElevation="0dp"
-                                app:strokeWidth="0dp" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="14dp"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/nunito_extrabold"
-                                app:fontFamily="@font/nunito_extrabold"
-                                android:text="@string/drink_coffee"
-                                android:textColor="@color/on_background"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/tvYearCoffeeLitres"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/nunito_extrabold"
-                                app:fontFamily="@font/nunito_extrabold"
-                                android:text="80 L"
-                                android:textColor="@color/on_background"
-                                android:textSize="15sp" />
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:outlineAmbientShadowColor="@color/card_shadow"
-                        android:outlineSpotShadowColor="@color/card_shadow"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="4dp"
-                        app:cardForegroundColor="@android:color/transparent"
-                        app:strokeWidth="0dp"
-                        tools:targetApi="p">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="16dp">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:layout_width="6dp"
-                                android:layout_height="32dp"
-                                app:cardBackgroundColor="@color/tea_green"
-                                app:cardCornerRadius="3dp"
-                                app:cardElevation="0dp"
-                                app:strokeWidth="0dp" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="14dp"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/nunito_extrabold"
-                                app:fontFamily="@font/nunito_extrabold"
-                                android:text="@string/drink_tea"
-                                android:textColor="@color/on_background"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/tvYearTeaLitres"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/nunito_extrabold"
-                                app:fontFamily="@font/nunito_extrabold"
-                                android:text="30.5 L"
-                                android:textColor="@color/on_background"
-                                android:textSize="15sp" />
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
             </LinearLayout>
+
         </FrameLayout>
     </androidx.core.widget.NestedScrollView>
 

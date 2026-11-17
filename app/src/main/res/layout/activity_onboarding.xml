@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/page_background"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        style="@style/Widget.MTS.Text.Heading2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Your Goal (Placeholder)" />
+
+    <TextView
+        style="@style/Widget.MTS.Text.Body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Onboarding biometrics and reminder setup will be implemented in the next sprint."
+        android:textColor="@color/muted" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDone"
+        style="@style/Widget.MTS.Button.Dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Back" />
+</LinearLayout>
