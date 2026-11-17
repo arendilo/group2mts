@@ -14,4 +14,19 @@
     <string name="drink_water">Water</string>
     <string name="drink_coffee">Coffee</string>
     <string name="drink_tea">Tea</string>
+
+    <string name="monthly_hydration_chart_title">Monthly hydration · L</string>
+    <string name="best_month_format">Best month: %1$s</string>
+    <string name="month_jan">J</string>
+    <string name="month_feb">F</string>
+    <string name="month_mar">M</string>
+    <string name="month_apr">A</string>
+    <string name="month_may">M</string>
+    <string name="month_jun">J</string>
+    <string name="month_jul">J</string>
+    <string name="month_aug">A</string>
+    <string name="month_sep">S</string>
+    <string name="month_oct">O</string>
+    <string name="month_nov">N</string>
+    <string name="month_dec">D</string>
 </resources>
