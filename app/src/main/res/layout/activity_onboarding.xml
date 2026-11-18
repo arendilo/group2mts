@@ -1,33 +1,562 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/page_background"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:clipToPadding="false"
+    android:fillViewport="true">
 
-    <TextView
-        style="@style/Widget.MTS.Text.Heading2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Set Your Goal (Placeholder)" />
-
-    <TextView
-        style="@style/Widget.MTS.Text.Body"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="Onboarding biometrics and reminder setup will be implemented in the next sprint."
-        android:textColor="@color/muted" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnDone"
-        style="@style/Widget.MTS.Button.Dark"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Back" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            style="@style/Widget.MTS.Text.Heading1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Set your goal"
+            android:textSize="28sp" />
+
+        <TextView
+            style="@style/Widget.MTS.Text.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A few details. A little more you." />
+
+        <!-- Unit pills -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.MTS.Card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="22dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardUnitMetric"
+                    style="@style/Widget.MTS.Card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="18dp">
+
+                    <TextView
+                        style="@style/Widget.MTS.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="10dp"
+                        android:text="cm / kg"
+                        android:textStyle="bold" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardUnitImperial"
+                    style="@style/Widget.MTS.Card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="18dp">
+
+                    <TextView
+                        style="@style/Widget.MTS.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="10dp"
+                        android:text="ft / lbs"
+                        android:textStyle="bold" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Details card -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.MTS.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Widget.MTS.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gender"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardMale"
+                        style="@style/Widget.MTS.Card"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardCornerRadius="16dp"
+                        app:strokeColor="@color/tab_border"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <TextView
+                                style="@style/Widget.MTS.Text.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Male"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvMaleIcon"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:layout_marginTop="8dp"
+                                android:background="@drawable/bg_circle"
+                                android:gravity="center"
+                                android:text="♂"
+                                android:textColor="@color/white"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardFemale"
+                        style="@style/Widget.MTS.Card"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardCornerRadius="16dp"
+                        app:strokeColor="@color/tab_border"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <TextView
+                                style="@style/Widget.MTS.Text.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Female"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvFemaleIcon"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:layout_marginTop="8dp"
+                                android:background="@drawable/bg_circle"
+                                android:gravity="center"
+                                android:text="♀"
+                                android:textColor="@color/white"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <TextView
+                    style="@style/Widget.MTS.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Date of birth"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.MTS.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="@color/tab_border"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="8dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Widget.MTS.Text.Caption"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Month" />
+
+                            <com.example.group2mts.WheelView
+                                android:id="@+id/pickerMonth"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Widget.MTS.Text.Caption"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Day" />
+
+                            <com.example.group2mts.WheelView
+                                android:id="@+id/pickerDay"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Widget.MTS.Text.Caption"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Year" />
+
+                            <com.example.group2mts.WheelView
+                                android:id="@+id/pickerYear"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvWeightLabel"
+                            style="@style/Widget.MTS.Text.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Weight (kg)"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/Widget.MTS.Card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            app:cardCornerRadius="16dp"
+                            app:strokeColor="@color/tab_border"
+                            app:strokeWidth="1dp">
+
+                            <com.example.group2mts.WheelView
+                                android:id="@+id/pickerWeight"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp" />
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvHeightLabel"
+                            style="@style/Widget.MTS.Text.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Height (cm)"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            style="@style/Widget.MTS.Card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            app:cardCornerRadius="16dp"
+                            app:strokeColor="@color/tab_border"
+                            app:strokeWidth="1dp">
+
+                            <com.example.group2mts.WheelView
+                                android:id="@+id/pickerHeight"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp" />
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Activity level row -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/rowActivity"
+            style="@style/Widget.MTS.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Widget.MTS.Text.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Activity level" />
+
+                <TextView
+                    android:id="@+id/tvActivity"
+                    style="@style/Widget.MTS.Text.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Medium"
+                    android:textStyle="bold" />
+
+                <TextView
+                    style="@style/Widget.MTS.Text.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="›"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Daily goal -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.MTS.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="@color/accent_warning">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Widget.MTS.Text.Body"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Daily goal"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/Widget.MTS.Card"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="20dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/cardGoalRecommended"
+                                style="@style/Widget.MTS.Card"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:focusable="true"
+                                app:cardCornerRadius="16dp">
+
+                                <TextView
+                                    style="@style/Widget.MTS.Text.Caption"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingHorizontal="12dp"
+                                    android:paddingVertical="7dp"
+                                    android:text="Recommended"
+                                    android:textStyle="bold" />
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/cardGoalCustom"
+                                style="@style/Widget.MTS.Card"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:focusable="true"
+                                app:cardCornerRadius="16dp">
+
+                                <TextView
+                                    style="@style/Widget.MTS.Text.Caption"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingHorizontal="12dp"
+                                    android:paddingVertical="7dp"
+                                    android:text="Custom"
+                                    android:textStyle="bold" />
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.MTS.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="26dp"
+                    app:strokeColor="@color/wave_blue"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="6dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnMinus"
+                            style="@style/Widget.MTS.Button.Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="48dp"
+                            android:text="−"
+                            android:textSize="22sp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <EditText
+                                android:id="@+id/tvGoal"
+                                style="@style/Widget.MTS.Text.Heading2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:imeOptions="actionDone"
+                                android:inputType="number"
+                                android:maxLength="6"
+                                android:minWidth="64dp"
+                                android:padding="0dp"
+                                android:text="2,000"
+                                android:textSize="24sp" />
+
+                            <TextView
+                                style="@style/Widget.MTS.Text.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:text="ml / day" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPlus"
+                            style="@style/Widget.MTS.Button.Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="48dp"
+                            android:text="+"
+                            android:textSize="22sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    style="@style/Widget.MTS.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Custom stays fixed when your weight changes."
+                    android:textColor="@color/on_background" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnContinue"
+            style="@style/Widget.MTS.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Continue"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/wave_blue" />
+
+        <TextView
+            style="@style/Widget.MTS.Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="A starting point, not a prescription. Adjust anytime." />
+    </LinearLayout>
+</ScrollView>

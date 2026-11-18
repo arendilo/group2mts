@@ -84,7 +84,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 if (auth.currentSessionOrNull() != null) {
                     // Email confirmation is OFF: user is signed in
-                    startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
+                    startActivity(Intent(this@RegisterActivity, OnboardingActivity::class.java))
                     finishAffinity()
                 } else {
                     // Email confirmation is ON: user must verify first

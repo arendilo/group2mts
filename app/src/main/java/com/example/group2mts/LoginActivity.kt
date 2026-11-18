@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.group2mts.data.HydrationRepository
 import com.example.group2mts.data.SupabaseProvider
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -119,8 +120,18 @@ class LoginActivity : AppCompatActivity() {
     private fun goToMain() {
         if (navigated) return
         navigated = true
-        startActivity(Intent(this, MainActivity::class.java))
-        finishAffinity()
+        lifecycleScope.launch {
+            // A brand new account (for example Google sign up) has no gender yet, so it still
+            // needs onboarding. If the profile cannot be read, go to the dashboard anyway.
+            val needsOnboarding = try {
+                HydrationRepository().getProfile().gender == null
+            } catch (e: Exception) {
+                false
+            }
+            val target = if (needsOnboarding) OnboardingActivity::class.java else MainActivity::class.java
+            startActivity(Intent(this@LoginActivity, target))
+            finishAffinity()
+        }
     }
 
     private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
